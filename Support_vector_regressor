@@ -1,0 +1,38 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.formula.api as sm 
+
+sheet=pd.read_csv('Position_Salaries.csv')
+x=sheet.iloc[:,1:2].values
+y=sheet.iloc[:,-1:].values
+
+#from sklearn.svm import SVR
+from sklearn.ensemble import RandomForestRegressor 
+from sklearn.model_selection import cross_val_predict as cs
+''''from sklearn.preprocessing import StandardScaler,MinMaxScaler
+sc_x=StandardScaler()
+sc_y=StandardScaler()
+minmax_x=MinMaxScaler()
+minmax_y=MinMaxScaler()
+x=sc_x.fit_transform(x)
+y=sc_y.fit_transform(y)
+x_min=minmax_x.fit_transform(x)
+y_min=minmax_y.fit_transform(y)
+model=SVR(kernel= 'rbf')'''
+forest_reg=RandomForestRegressor(n_estimators=300,random_state=0)
+forest_reg.fit(x,y)
+x=np.append(arr=np.ones((len(x),1)).astype(int),values=x,axis=1)
+ols=sm.OLS(endog=y,exog=x).fit()
+print(ols.summary())
+'''model.fit(x,y)
+model2=SVR()
+model2.fit(x_min,y_min)
+print(sc_y.inverse_transform(model.predict(sc_x.transform([[6.5]]))))'''
+#x_grid=np.arange(min(x),max(x),0.01)
+#x_grid=x_grid.reshape((len(x_grid),1))
+#plt.scatter(x,y)
+#plt.plot(x,forest_reg.predict(x),color='orange')
+plt.plot(x_grid,forest_reg.predict(x_grid),color='red')
+plt.show()
+print(forest_reg.predict(7))
