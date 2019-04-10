@@ -1,0 +1,36 @@
+#importing the libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder
+import scipy.cluster.hierarchy as sch
+from sklearn.cluster import AgglomerativeClustering
+import statsmodels.formula.api as sm
+#preparing data
+sheet=pd.read_csv('Mall_Customers.csv')
+le_gender=LabelEncoder()
+sheet['Genre']=le_gender.fit_transform(sheet.Genre)
+x=sheet.iloc[:,[3,4]].values
+#creating dendogram
+#dendogram=sch.dendrogram(sch.linkage(x,method='ward'))
+plt.title("Shivam's Dendrogram")
+
+hc=AgglomerativeClustering(n_clusters=5)
+y_p=hc.fit_predict(x)
+clusters=['cluster 1','cluster 2','cluster 3','cluster 4','cluster 5']
+
+sheet['cluster no.']=y_p
+sheet['cluster']=sheet['cluster no.'].apply(lambda x:clusters[x])
+sheet0=sheet[sheet['cluster no.']==0]
+sheet1=sheet[sheet['cluster no.']==1]
+sheet2=sheet[sheet['cluster no.']==2]
+sheet3=sheet[sheet['cluster no.']==3]
+sheet4=sheet[sheet['cluster no.']==4]
+
+plt.scatter(sheet0['Spending Score (1-100)'],sheet0['Annual Income (k$)'],color='red',label='cluster 1')
+plt.scatter(sheet1['Spending Score (1-100)'],sheet1['Annual Income (k$)'],color='black')
+plt.scatter(sheet2['Spending Score (1-100)'],sheet2['Annual Income (k$)'],color='blue')
+plt.scatter(sheet3['Spending Score (1-100)'],sheet3['Annual Income (k$)'],color='orange')
+plt.scatter(sheet4['Spending Score (1-100)'],sheet4['Annual Income (k$)'])
+#plt.scatter(hc.cluster_centers_[:,0],final_km.cluster_centers_[:,1],color='yellow')
+plt.legend()
