@@ -1,0 +1,31 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder,StandardScaler,MinMaxScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix
+import seaborn as sn
+sheet=pd.read_csv('Social_Network_Ads.csv')
+le_gender=LabelEncoder()
+sheet['Gender']=le_gender.fit_transform(sheet.Gender)
+x=sheet.iloc[:,1:-1].values.astype(float)
+y=sheet.iloc[:,-1:].values.astype(float)
+std_x=StandardScaler()
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=10)
+x_train=std_x.fit_transform(x_train)
+x_test=std_x.fit_transform(x_test)
+svm=SVC(kernel='rbf',random_state=0)
+svm.fit(x_train,y_train)
+knn=KNeighborsClassifier()
+knn.fit(x_train,y_train)
+y_p=svm.predict(x_test)
+cm=confusion_matrix(y_test,y_p)
+#sn.heatmap(cm,annot=True)
+model=svm
+print(svm.score(x_test,y_test))
+for i in range(len(x_test)):
+   if((model.predict([x_test[i,:]]))==1):
+       plt.scatter(x_test[i,1],x_test[i,2],color='red')
+   else:
+       plt.scatter(x_test[i,1],x_test[i,2],color='blue')
