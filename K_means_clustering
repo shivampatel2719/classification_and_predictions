@@ -1,0 +1,38 @@
+import numpy as np
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import LabelEncoder
+import matplotlib.pyplot as plt
+sheet=pd.read_csv('Mall_Customers.csv')
+#finding the k by elbow method
+le_gender=LabelEncoder()
+sheet['Genre']=le_gender.fit_transform(sheet.Genre)
+inputs=sheet.iloc[:,3:5].values
+sse=[]
+k_rng=range(1,10)
+for i in k_rng:
+    km=KMeans(n_clusters=i,init='k-means++',n_init=10,random_state=10)
+    km.fit(inputs)
+    sse.append(km.inertia_)
+#plt.scatter(k_rng,sse)
+#plt.plot(k_rng,sse)    
+
+final_km=KMeans(n_clusters=5,n_init=20,max_iter=1000,random_state=0)
+clusters=['cluster 1','cluster 2','cluster 3','cluster 4','cluster 5']
+y_p=final_km.fit_predict(inputs)
+
+sheet['cluster no.']=y_p
+sheet['cluster']=sheet['cluster no.'].apply(lambda x:clusters[x])
+sheet0=sheet[sheet['cluster no.']==0]
+sheet1=sheet[sheet['cluster no.']==1]
+sheet2=sheet[sheet['cluster no.']==2]
+sheet3=sheet[sheet['cluster no.']==3]
+sheet4=sheet[sheet['cluster no.']==4]
+
+plt.scatter(sheet0['Spending Score (1-100)'],sheet0['Annual Income (k$)'],color='red',label='cluster 1')
+plt.scatter(sheet1['Spending Score (1-100)'],sheet1['Annual Income (k$)'],color='black')
+plt.scatter(sheet2['Spending Score (1-100)'],sheet2['Annual Income (k$)'],color='blue')
+plt.scatter(sheet3['Spending Score (1-100)'],sheet3['Annual Income (k$)'],color='orange')
+plt.scatter(sheet4['Spending Score (1-100)'],sheet4['Annual Income (k$)'])
+plt.scatter(final_km.cluster_centers_[:,0],final_km.cluster_centers_[:,1],color='yellow')
+plt.legend()
