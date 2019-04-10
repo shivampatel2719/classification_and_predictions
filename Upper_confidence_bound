@@ -1,0 +1,50 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+sheet=pd.read_csv('Ads_CTR_Optimisation.csv')
+#random algorithm
+#import random
+import math
+'''N=10000
+d=10
+ads=[]
+reward=0
+total=0
+for i in range(N):
+    ad=random.randrange(d)
+    ads.append(ad)
+    reward=sheet.values[i,ad]
+    total=total+reward'''
+N=5000
+d=5
+ads_selected=[]
+total_reward=0
+numbers_of_selection=[0]*10
+sum_of_rewards=[0]*10
+for n in range(N):
+    ad=0
+    max_upper_bound=0
+    for i in range(d):
+        if(numbers_of_selection[i]>0):
+            average_reward=sum_of_rewards[i]/numbers_of_selection[i]
+            delta_i=math.sqrt(3/2*math.log(n+1)/numbers_of_selection[i])
+            upper_bound=average_reward+delta_i
+        else:
+            upper_bound=1e400
+        if upper_bound>max_upper_bound:
+            max_upper_bound=upper_bound
+            ad=i
+    ads_selected.append(ad)
+    numbers_of_selection[ad]+=1
+    sum_of_rewards[ad]+=sheet.values[n,ad]
+    total_reward+=sheet.values[n,ad] #or sheet.values[n,ad]
+plt.hist(ads_selected)
+'''
+or we can do this
+
+for i in range(d):
+    if(numbers_of_selection![i]>0):
+        ad=i
+        break
+'''
