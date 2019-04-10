@@ -1,0 +1,42 @@
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import LabelEncoder,StandardScaler,MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix as cm
+import seaborn as sn
+import matplotlib.pyplot as plt
+from sklearn.svm import SVC
+sheet=pd.read_csv('Social_Network_Ads.csv')
+le_gender=LabelEncoder()
+std_x=StandardScaler()
+mm=MinMaxScaler()
+#std_y=StandardScaler()
+sheet['Gender']=le_gender.fit_transform(sheet.Gender)
+x=sheet.iloc[:,1:-1].values.astype(float)
+y=sheet.iloc[:,-1:].values.astype(float)
+#y=std_y.fit_transform(y)
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.3,random_state=10)
+x_train=std_x.fit_transform(x_train)
+x_test=std_x.fit_transform(x_test)
+y_test=mm.fit_transform(y_test)
+y_test=mm.fit_transform(y_test)
+sv=SVC(C=1)
+#model=LogisticRegression(max_iter=1000)
+#tree=DecisionTreeClassifier()
+#forest=RandomForestClassifier(n_estimators=350,random_state=5)
+#tree.fit(x_train,y_train)
+#model.fit(x_train,y_train)
+sv.fit(x_train,y_train)
+#y_p=sv.predict(x_test)
+#confusion=cm(y_test,y_p)
+#sn.heatmap(confusion,annot=True)
+#forest.fit(x_train,y_train)
+print("acc. of svm:"+str(sv.score(x_test,y_test)))
+#print("acc. of forest:"+str(forest.score(x_test,y_test)))
+plt.scatter(x_test,sv.predict(x_test))
+plt.scatter(x_test[:,0:1],y_test)
+
+#i=np.arange(start = X_set[:, 0].min() - 1, stop = X_set[:, 0].max() + 1, step = 0.01),
